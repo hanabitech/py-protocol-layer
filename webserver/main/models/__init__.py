@@ -32,6 +32,14 @@ def init_database():
     mongo_client = MongoClient(database_host, database_port, maxPoolSize=10)
     mongo_db = mongo_client[database_name]
     log(f"Connection to mongodb://{database_host}:{database_port} is successful!")
+    create_all_indexes()
+    log(f"Created indexes if not already present!")
+
+
+def create_all_indexes():
+    get_mongo_collection("on_search_items").create_index([('id', TEXT)], name='id_index')
+    get_mongo_collection("location").create_index([("gps", GEOSPHERE)])
+
 
 def get_mongo_collection(collection_name):
     # check if database is initialized
