@@ -37,9 +37,16 @@ def init_database():
 
 
 def create_all_indexes():
-    get_mongo_collection("on_search_items").create_index([('id', TEXT)], name='id_index')
-    get_mongo_collection("location").create_index([("gps", GEOSPHERE)])
+    ensure_index(get_mongo_collection("on_search_items"), "id", TEXT, "id_index")
+    ensure_index(get_mongo_collection("location"), "gps", GEOSPHERE, "gps_2dsphere")
 
+def ensure_index(collection, field, index_type, index_name):
+    existing_indexes = collection.index_information()
+    if index_name not in existing_indexes:
+        collection.create_index([(field, index_type)], name=index_name)
+        print(f"Index {index_name} created on {field} with type {index_type}.")
+    else:
+        print(f"Index {index_name} already exists.")
 
 def get_mongo_collection(collection_name):
     # check if database is initialized
