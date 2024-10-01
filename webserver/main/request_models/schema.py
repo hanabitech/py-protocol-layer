@@ -97,6 +97,7 @@ class Action(Enum):
     on_support = 'on_support'
     on_issue = 'on_issue'
     on_issue_status = 'on_issue_status'
+    on_collector_recon = 'on_collector_recon'
 
 
 class Country(BaseModel):
@@ -132,6 +133,7 @@ class Domain(Enum):
     ONDC_AGR10 = 'ONDC:AGR10'
     ONDC_MOB = 'ONDC:MOB'
     ONDC_LOG = 'ONDC:LOG'
+    ONDC_NTS10 = 'ONDC:NTS10'
 
 
 class Duration(BaseModel):
