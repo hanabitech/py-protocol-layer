@@ -15,6 +15,7 @@ from main.routes.ondc_network import ondc_network_namespace
 from main.routes.client import client_namespace
 from main.routes.ondc_network_test import ondc_network_test_namespace
 from main.routes.response import response_namespace
+from main.routes.ondc_rsp import ondc_rsp_namespace
 from main.utils.schema_utils import transform_json_schema_error
 
 
@@ -66,3 +67,4 @@ api.add_namespace(response_namespace, path='/protocol')
 api.add_namespace(cron_namespace, path='/protocol')
 api.add_namespace(ondc_network_test_namespace, path='/protocol/test')
 api.add_namespace(logs_namespace, path='/protocol')
+api.add_namespace(ondc_rsp_namespace, path='/protocol')

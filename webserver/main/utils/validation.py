@@ -17,7 +17,7 @@ def validate_payload_schema_based_on_version(request_payload, request_type):
 
     # Issue action's core version should be 1.0.0
     if request_payload[constant.CONTEXT]["core_version"] == "1.0.0":
-        if "issue" in request_type:
+        if "issue" in request_type or "on_collector_recon" in request_type:
             return validate_payload_schema_using_pydantic_classes(request_payload, request_type)
         return get_ack_response(context=request_payload["context"], ack=False,
                                 error={"type": BaseError.JSON_SCHEMA_ERROR.value, "code": "20000",
