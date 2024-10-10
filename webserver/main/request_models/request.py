@@ -293,10 +293,6 @@ class OnIssueStatusRequest(BaseModel):
     message: dict
     error: Optional[Error]
 
-class OnCollectorReconRequest(BaseModel):
-    context: Context
-    message: dict
-    error: Optional[Error]
 
 request_type_to_class_mapping = {
     "search": SearchRequest,
@@ -323,5 +319,4 @@ request_type_to_class_mapping = {
     "on_support": OnSupportRequest,
     "on_issue": OnIssueRequest,
     "on_issue_status": OnIssueStatusRequest,
-    "on_collector_recon": OnCollectorReconRequest
 }
