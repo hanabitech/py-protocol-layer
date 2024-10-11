@@ -9,7 +9,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 
-from pydantic import AnyUrl, BaseModel, EmailStr, Field, confloat, conint, constr
+from pydantic import AnyUrl, BaseModel, EmailStr, Field, confloat, conint, constr, StrictStr
 
 
 class Status(Enum):
@@ -97,6 +97,7 @@ class Action(Enum):
     on_support = 'on_support'
     on_issue = 'on_issue'
     on_issue_status = 'on_issue_status'
+    on_collector_recon = 'on_collector_recon'
 
 
 class Country(BaseModel):
@@ -132,6 +133,7 @@ class Domain(Enum):
     ONDC_AGR10 = 'ONDC:AGR10'
     ONDC_MOB = 'ONDC:MOB'
     ONDC_LOG = 'ONDC:LOG'
+    ONDC_NTS10 = 'ONDC:NTS10'
 
 
 class Duration(BaseModel):
@@ -342,7 +344,7 @@ class State1(Enum):
 
 
 class FieldOndcLinkedOrder(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
 
 
 class Organization(BaseModel):
@@ -351,8 +353,8 @@ class Organization(BaseModel):
 
 
 class Page(BaseModel):
-    id: Optional[str] = None
-    next_id: Optional[str] = None
+    id: Optional[StrictStr] = None
+    next_id: Optional[StrictStr] = None
 
 
 class TlMethod1(Enum):
@@ -480,6 +482,7 @@ class Price(BaseModel):
 class BreakupItem(BaseModel):
     title: Optional[str] = None
     price: Optional[Price] = None
+    count: Optional[int] = None
 
 
 class Quotation(BaseModel):
@@ -513,7 +516,7 @@ class Range(BaseModel):
 
 class Scalar(BaseModel):
     type: Optional[Type4] = None
-    value: Union[str, float]
+    value: str
     estimated_value: Optional[float] = None
     computed_value: Optional[float] = None
     range: Optional[Range] = None
@@ -722,12 +725,12 @@ class IssueSubCategory(Enum):
 
 
 class IssueItem(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     quantity: Optional[float] = None
 
 
 class IssueFulfillment(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     state: Optional[str] = None
 
 
@@ -806,12 +809,12 @@ class ODRPricingModel(BaseModel):
 
 
 class CredentialCredentialSubject(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     additionalProperties: Optional[Dict[str, Any]] = None
 
 
 class CredentialCredentialSchema(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     type: Optional[str] = None
 
 
@@ -836,14 +839,14 @@ class InlineResponse200Message(BaseModel):
 
 
 class Id(BaseModel):
-    __root__: str = Field(
+    __root__: StrictStr = Field(
         ...,
         description='ID of the add-on. This follows the syntax {item.id}/add-on/{add-on unique id} for item specific add-on OR ',
     )
 
 
 class IdModel(BaseModel):
-    __root__: Union[str, int] = Field(..., description='Unique id of the category')
+    __root__: str = Field(..., description='Unique id of the category')
 
 
 class Code(BaseModel):
@@ -871,13 +874,13 @@ class FeedbackId(BaseModel):
 
 
 class IdModel2(BaseModel):
-    __root__: str = Field(
+    __root__: StrictStr = Field(
         ..., description='Unique reference ID to the fulfillment of an order'
     )
 
 
 class IdModel3(BaseModel):
-    __root__: Union[str, int] = Field(
+    __root__: StrictStr = Field(
         ...,
         description='This is the most unique identifier of a service item. An example of an Item ID could be the SKU of a product.',
     )
@@ -888,8 +891,12 @@ class Selected(BaseModel):
     measure: Optional[Scalar] = None
 
 
+class OrderItemQuantity(BaseModel):
+    count: int
+
+
 class IdModel4(BaseModel):
-    __root__: str
+    __root__: StrictStr
 
 
 class Currency(BaseModel):
@@ -903,7 +910,7 @@ class Value(BaseModel):
 
 
 class IdModel5(BaseModel):
-    __root__: Union[str, int] = Field(..., description='Id of the provider')
+    __root__: StrictStr = Field(..., description='Id of the provider')
 
 
 class ValueModel(BaseModel):
@@ -983,7 +990,7 @@ class Context(BaseModel):
     key: Optional[str] = Field(
         None, description='The encryption public key of the sender'
     )
-    ttl: Optional[Union[str, int]] = Field(
+    ttl: Optional[str] = Field(
         None,
         description="Timestamp for which this message holds valid in ISO8601 durations format<br> Outer limit for ttl for search, select, init, confirm, status, track, cancel, update, rating, support is 'PT30S' which is 30 seconds<br> Different buyer apps can change this to meet their UX requirements, but it shouldn't exceed this outer limit",
     )
@@ -1006,6 +1013,10 @@ class Descriptor2(Descriptor):
     images: List[Image]
 
 
+class ItemDescriptor(Descriptor):
+    name: str
+
+
 class Dimensions(BaseModel):
     length: Optional[Scalar] = None
     breadth: Optional[Scalar] = None
@@ -1013,7 +1024,7 @@ class Dimensions(BaseModel):
 
 
 class FeedbackFormElement(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     parent_id: Optional[IdModel1] = None
     question: Optional[str] = Field(
         None,
@@ -1056,7 +1067,7 @@ class ItemQuantity(BaseModel):
     selected: Optional[Selected] = None
 
 class Item(BaseModel):
-    id: Union[str, int] = Field(
+    id: StrictStr = Field(
         ...,
         description='This is the most unique identifier of a service item. An example of an Item ID could be the SKU of a product.',
     )
@@ -1117,7 +1128,7 @@ class Item(BaseModel):
 
 
 class Location(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     descriptor: Optional[Descriptor] = None
     gps: Optional[Gps] = None
     address: Optional[Address] = None
@@ -1131,7 +1142,7 @@ class Location(BaseModel):
 
 
 class Offer(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     descriptor: Optional[Descriptor] = None
     location_ids: Optional[List[IdModel4]] = None
     category_ids: Optional[List[IdModel]] = None
@@ -1140,7 +1151,7 @@ class Offer(BaseModel):
 
 
 class Option(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     descriptor: Optional[Descriptor] = None
 
 
@@ -1150,12 +1161,12 @@ class Location1(BaseModel):
 
 class Provider1(BaseModel):
     id: Optional[IdModel5] = None
-    locations: Optional[List[Location1]] = Field(None)
+    locations: Optional[List[Location1]] = Field(None, description='Location List', min_items=1)
 
 
 class Item1(BaseModel):
     id: IdModel3
-    quantity: Optional[Selected] = None
+    quantity: Optional[OrderItemQuantity] = None
 
 
 class AddOn1(BaseModel):
@@ -1244,7 +1255,7 @@ class Person(BaseModel):
 
 
 class Policy(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     descriptor: Optional[Descriptor] = None
     parent_policy_id: Optional[IdModel4] = None
     time: Optional[Time] = None
@@ -1261,6 +1272,7 @@ class Item2(Item):
 
 class OnSearchItem(Item):
     quantity: ItemQuantity
+    descriptor: ItemDescriptor
     tags: List[Tag]
 
 
@@ -1360,7 +1372,7 @@ class SupplementaryInformation(BaseModel):
 
 
 class OrderDetails(BaseModel):
-    id: Optional[str] = Field(
+    id: Optional[StrictStr] = Field(
         None,
         description='the value of this field will be the combination of context.transaction_id and order.id.',
     )
@@ -1413,7 +1425,7 @@ class RespondentAction(BaseModel):
 
 
 class Credential(BaseModel):
-    id: Optional[str] = None
+    id: Optional[StrictStr] = None
     type: Optional[str] = 'VerifiableCredential'
     issuer: Optional[str] = None
     issuance_date: Optional[datetime] = None
@@ -1432,7 +1444,7 @@ class IssueStatusBody(BaseModel):
 
 
 class AddOn(BaseModel):
-    id: Optional[str] = Field(
+    id: Optional[StrictStr] = Field(
         None,
         description='ID of the add-on. This follows the syntax {item.id}/add-on/{add-on unique id} for item specific add-on OR ',
     )
@@ -1456,7 +1468,7 @@ class Cancellation(BaseModel):
 
 
 class Category(BaseModel):
-    id: str = Field(None, description='Unique id of the category')
+    id: StrictStr
     parent_category_id: Optional[IdModel] = None
     descriptor: Optional[Descriptor] = None
     time: Optional[Time] = None
@@ -1494,7 +1506,7 @@ class End(BaseModel):
 
 
 class Fulfillment(BaseModel):
-    id: Optional[str] = Field(
+    id: Optional[StrictStr] = Field(
         None, description='Unique reference ID to the fulfillment of an order'
     )
     type: Optional[Type2] = Field(
@@ -1525,7 +1537,7 @@ class Operator(Person):
 
 
 class Order(BaseModel):
-    id: Optional[Union[float, str]] = Field(
+    id: Optional[StrictStr] = Field(
         None,
         description='Hash of order object without id<br> Will be created by buyer app in confirm API',
     )
@@ -1552,7 +1564,7 @@ class Order(BaseModel):
 
 
 class Provider(BaseModel):
-    id: Union[str, int] = Field(..., description='Id of the provider')
+    id: StrictStr = Field(..., description='Id of the provider')
     descriptor: Optional[Descriptor] = None
     category_id: Optional[str] = Field(None, description='Category Id of the provider')
     rating: Optional[ValueModel] = None
@@ -1560,7 +1572,7 @@ class Provider(BaseModel):
     categories: Optional[List[Category]] = None
     fulfillments: Optional[List[Fulfillment]] = None
     payments: Optional[List[Payment]] = None
-    locations: Optional[List[Location2]] = None
+    locations: Optional[List[Location2]] = Field(None, description='Location List', min_items=1)
     offers: Optional[List[Offer]] = None
     items: Optional[List[Item2]] = None
     exp: Optional[datetime] = Field(
@@ -1571,7 +1583,7 @@ class Provider(BaseModel):
 
 
 class OnSearchProvider(BaseModel):
-    id: Union[str, int] = Field(..., description='Id of the provider')
+    id: StrictStr = Field(..., description='Id of the provider')
     descriptor: Optional[Descriptor] = None
     category_id: Optional[str] = Field(None, description='Category Id of the provider')
     rating: Optional[ValueModel] = None
@@ -1579,21 +1591,40 @@ class OnSearchProvider(BaseModel):
     categories: Optional[List[Category]] = None
     fulfillments: Optional[List[Fulfillment]] = None
     payments: Optional[List[Payment]] = None
-    locations: Optional[List[Location2]] = None
+    locations: Optional[List[Location2]] = Field(None, description='Location List', min_items=1)
     offers: Optional[List[Offer]] = None
     items: Optional[List[OnSearchItem]] = Field(None, description='Item List', max_items=500, min_items=1)
     exp: Optional[datetime] = Field(
         None, description='Time after which catalog has to be refreshed'
     )
     rateable: Optional[Rateable] = None
-    tags: List[Tag] = []
+    tags: List[Tag]
+
+
+class IncrOnSearchProvider(BaseModel):
+    id: StrictStr = Field(..., description='Id of the provider')
+    descriptor: Optional[Descriptor] = None
+    category_id: Optional[str] = Field(None, description='Category Id of the provider')
+    rating: Optional[ValueModel] = None
+    time: Optional[Time] = None
+    categories: Optional[List[Category]] = None
+    fulfillments: Optional[List[Fulfillment]] = None
+    payments: Optional[List[Payment]] = None
+    locations: Optional[List[Location2]] = Field(None, description='Location List', min_items=1)
+    offers: Optional[List[Offer]] = None
+    items: Optional[List[OnSearchItem]] = Field(None, description='Item List', max_items=1000, min_items=1)
+    exp: Optional[datetime] = Field(
+        None, description='Time after which catalog has to be refreshed'
+    )
+    rateable: Optional[Rateable] = None
+    tags: Optional[List[Tag]]
 
 
 class Rating(BaseModel):
     rating_category: Optional[str] = Field(
         None, description='Category of the object being rated'
     )
-    id: Optional[str] = Field(None, description='Id of the object being rated')
+    id: Optional[StrictStr] = Field(None, description='Id of the object being rated')
     value: Optional[confloat(ge=1.0, le=5.0)] = Field(
         None,
         description='Rating value given to the object (1 - Poor; 2 - Needs improvement; 3 - Satisfactory; 4 - Good; 5 - Excellent)',
@@ -1642,6 +1673,20 @@ class Catalog(BaseModel):
     bpp_payments: Optional[List[Payment]] = Field(None, alias='bpp/payments')
     bpp_offers: Optional[List[Offer]] = Field(None, alias='bpp/offers')
     bpp_providers: List[OnSearchProvider] = Field(..., alias='bpp/providers', max_items=5, min_items=1)
+    exp: Optional[datetime] = Field(
+        None, description='Time after which catalog has to be refreshed'
+    )
+
+
+class IncrCatalog(BaseModel):
+    bpp_descriptor: Optional[Descriptor] = Field(None, alias='bpp/descriptor')
+    bpp_categories: Optional[List[Category]] = Field(None, alias='bpp/categories')
+    bpp_fulfillments: Optional[List[Fulfillment]] = Field(
+        None, alias='bpp/fulfillments'
+    )
+    bpp_payments: Optional[List[Payment]] = Field(None, alias='bpp/payments')
+    bpp_offers: Optional[List[Offer]] = Field(None, alias='bpp/offers')
+    bpp_providers: List[IncrOnSearchProvider] = Field(..., alias='bpp/providers', max_items=5, min_items=1)
     exp: Optional[datetime] = Field(
         None, description='Time after which catalog has to be refreshed'
     )
