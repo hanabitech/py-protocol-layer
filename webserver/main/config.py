@@ -36,7 +36,6 @@ class Config:
     BAP_ID = os.getenv("BAP_ID", "buyer-app.ondc.org")
     BAP_UNIQUE_KEY_ID = os.getenv("BAP_UNIQUE_KEY_ID", "207")
     REGISTRY_BASE_URL = os.getenv("REGISTRY_BASE_URL", "https://staging.gateway.proteantech.in/ondc")
-    TTL_IN_SECONDS = int(os.getenv("TTL_IN_SECONDS", "18000"))
     VERIFICATION_ENABLE = os.getenv("VERIFICATION_ENABLE", "True") == "True"
     RABBITMQ_QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME", "bpp_protocol")
     RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
