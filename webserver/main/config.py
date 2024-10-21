@@ -60,6 +60,7 @@ class DevelopmentConfig(Config):
     MONGO_DATABASE_PORT = 27017
     MONGO_DATABASE_NAME = "sandbox_bap"
     CLIENT_WEBHOOK_ENDPOINT = os.getenv("CLIENT_WEBHOOK_ENDPOINT", "https://616e-2409-4042-4d8d-a7b7-c127-cb03-c9c2-ecae.in.ngrok.io/clientApis/response")
+    IGM_WEBHOOK_ENDPOINT = os.getenv("IGM_WEBHOOK_ENDPOINT", "http://biap-igm-node-js:6969/issueApis/response")
 
 
 class TestingConfig(Config):
@@ -85,6 +86,7 @@ class ProductionConfig(Config):
     MONGO_DATABASE_PORT = int(os.getenv("MONGO_DATABASE_PORT", 27017))
     MONGO_DATABASE_NAME = os.getenv("MONGO_DATABASE_NAME", "sandbox_bap")
     CLIENT_WEBHOOK_ENDPOINT = os.getenv("CLIENT_WEBHOOK_ENDPOINT", "http://localhost:3001/clientApis/response")
+    IGM_WEBHOOK_ENDPOINT = os.getenv("IGM_WEBHOOK_ENDPOINT", "http://biap-igm-node-js:6969/issueApis/response")
 
 
 class PreProductionConfig(Config):
@@ -105,6 +107,7 @@ class PreProductionConfig(Config):
     BAP_PUBLIC_KEY = os.getenv("BAP_PUBLIC_KEY", "some_key")
     BAP_ID = os.getenv("BAP_ID", "buyer-app-preprod.ondc.org")
     BAP_UNIQUE_KEY_ID = os.getenv("BAP_UNIQUE_KEY_ID", "96c81878-f327-457e-8835-5b35bb20f099")
+    IGM_WEBHOOK_ENDPOINT = os.getenv("IGM_WEBHOOK_ENDPOINT", "http://biap-igm-node-js:6969/issueApis/response")
 
 
 config_by_name = dict(
