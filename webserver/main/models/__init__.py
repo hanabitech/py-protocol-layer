@@ -34,18 +34,41 @@ def init_database():
     create_all_indexes()
     log(f"Created indexes if not already present!")
 
-
 def create_all_indexes():
-    ensure_index(get_mongo_collection("on_search_items"), "id", TEXT, "id_index")
-    ensure_index(get_mongo_collection("location"), "gps", GEOSPHERE, "gps_2dsphere")
+    [create_ttl_index(c) for c in ["on_select", "on_init", "on_confirm", "on_cancel", "on_status", "on_support",
+                                   "on_track", "on_update", "on_rating"]]
+    [create_ttl_index(c) for c in ["on_search_dump", "request_dump", "on_search_items",
+                                                            "provider", "custom_menu", "location", "product",
+                                                            "product_attribute", "product_attribute_value",
+                                                            "variant_group", "customisation_group"
+                                                            ]]
+    get_mongo_collection("on_search_items").create_index([('id', TEXT)], name='id_index')
+    get_mongo_collection("location").create_index([("gps", GEOSPHERE)])
 
-def ensure_index(collection, field, index_type, index_name):
-    existing_indexes = collection.index_information()
-    if index_name not in existing_indexes:
-        collection.create_index([(field, index_type)], name=index_name)
-        print(f"Index {index_name} created on {field} with type {index_type}.")
+
+def create_ttl_index(collection_name, ttl_in_seconds=None):
+    collection = mongo_db[collection_name]
+    index_name = "created_at_ttl"
+    # Set default TTL if not provided
+    ttl_in_seconds = ttl_in_seconds if ttl_in_seconds else get_config_by_name('TTL_IN_SECONDS')
+
+    # Get the current index information
+    indexes = collection.index_information()
+
+    # Check if the index exists and if the 'expireAfterSeconds' value matches
+    if index_name in indexes:
+        current_ttl = indexes[index_name].get('expireAfterSeconds')
+        if current_ttl != ttl_in_seconds:
+            # Drop the existing index if the TTL value is different
+            log(f"Dropping index {index_name} from collection {collection_name} due to TTL mismatch.")
+            collection.drop_index(index_name)
+            # Create the index with the new TTL value
+            log(f"Creating index {index_name} on collection {collection_name} with TTL of {ttl_in_seconds} seconds.")
+            collection.create_index([("created_at", ASCENDING)], name=index_name, expireAfterSeconds=ttl_in_seconds)
     else:
-        print(f"Index {index_name} already exists.")
+        # Create the index if it does not exist
+        log(f"Creating index {index_name} on collection {collection_name} with TTL of {ttl_in_seconds} seconds.")
+        collection.create_index([("created_at", ASCENDING)], name=index_name, expireAfterSeconds=ttl_in_seconds)
 
 def get_mongo_collection(collection_name):
     # check if database is initialized
