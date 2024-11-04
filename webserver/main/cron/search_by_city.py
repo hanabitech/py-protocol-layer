@@ -18,6 +18,29 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
     domain_list = [e.value for e in Domain] if domains is None else domains
     end_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
     start_time = (datetime.utcnow() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+    tags = [
+        {
+            "code":"bap_terms",
+            "list": [
+                {
+                    "code":"static_terms",
+                    "value":""
+                },
+                {
+                    "code":"static_terms_new",
+                    "value":"https://github.com/ONDC-Official/NP-Static-Terms/buyerNP_BNP/1.0/tc.pdf"
+                },
+                {
+                    "code":"effective_date",
+                    "value":"2023-10-01T00:00:00.000Z"
+                }
+            ]
+        }
+    ]
+
+
+
     if search_type == SearchType.FULL:
         city_list = ['std:06274', 'std:0451', 'std:0120', 'std:0512', 'std:05842', 'std:0522', 'std:06243', 'std:04286',
                      'std:05547', 'std:0474', 'std:0121', 'std:04266', 'std:04142', 'std:0551', 'std:0124', 'std:0591',
@@ -103,6 +126,9 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                         ]
                 }
             }
+    
+    # add static terms tag
+    message['intend']['tags'] = message['intend']['tags'] + tags
 
     for d in domain_list:
         for c in city_list:
