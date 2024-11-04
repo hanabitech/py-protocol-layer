@@ -128,7 +128,7 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
             }
     
     # add static terms tag
-    message['intend']['tags'] = message['intend']['tags'] + tags
+    message['intent']['tags'] = message['intent']['tags'] + tags
 
     for d in domain_list:
         for c in city_list:
