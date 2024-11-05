@@ -90,16 +90,6 @@ def bpp_post_call(request_type, request_payload):
     return post_on_bg_or_bpp(bpp_url_with_route, payload=request_payload, headers={'Authorization': auth_header})
 
 
-def bap_post_call(request_type, request_payload):
-    subscriber_id = request_payload[constant.CONTEXT][constant.BAP_ID]
-    bap_url = request_payload[constant.CONTEXT]["bap_uri"] if "bap_uri" in request_payload[constant.CONTEXT]\
-        else fetch_subscriber_url_from_lookup(request_type, subscriber_id=subscriber_id,
-                                              domain=request_payload[constant.CONTEXT][constant.DOMAIN])
-    bap_url_with_route = f"{bap_url}{request_type}" if bap_url.endswith("/") else f"{bap_url}/{request_type}"
-    auth_header = create_authorisation_header(request_payload)
-    return post_on_bg_or_bpp(bap_url_with_route, payload=request_payload, headers={'Authorization': auth_header})
-
-
 def dump_request_payload(action, payload):
     collection = get_mongo_collection('request_dump')
     return mongo.collection_insert_one(collection, {"action": action, "request": payload,

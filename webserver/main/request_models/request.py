@@ -219,10 +219,6 @@ class IssueStatusRequest(BaseModel):
     message: IssueStatusMessage
     error: Optional[Error]
 
-class InfoRequest(BaseModel):
-    context: Context
-    message: dict # TODO: fix this
-    error: Optional[Error]
 
 class FullOnSearchRequest(BaseModel):
     context: OnCallContext
@@ -318,11 +314,6 @@ class OnCollectorReconRequest(BaseModel):
     message: dict
     error: Optional[Error]
 
-class OnInfoRequest(BaseModel):
-    context: Context
-    message: dict
-    error: Optional[Error]
-
 request_type_to_class_mapping = {
     "search": SearchRequest,
     "select": SelectRequest,
@@ -336,7 +327,6 @@ request_type_to_class_mapping = {
     "support": SupportRequest,
     "issue": IssueRequest,
     "issue_status": IssueStatusRequest,
-    "info": InfoRequest,
     "full_on_search": FullOnSearchRequest,
     "incr_on_search": IncrOnSearchRequest,
     "on_select": OnSelectRequest,
@@ -350,6 +340,5 @@ request_type_to_class_mapping = {
     "on_support": OnSupportRequest,
     "on_issue": OnIssueRequest,
     "on_issue_status": OnIssueStatusRequest,
-    "on_collector_recon": OnCollectorReconRequest,
-    "on_info": OnInfoRequest
+    "on_collector_recon": OnCollectorReconRequest
 }
