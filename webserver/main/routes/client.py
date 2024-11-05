@@ -212,20 +212,3 @@ class AddUpdateRequest(Resource):
             return resp
         else:
             return resp
-
-
-@client_namespace.route("/info")
-class AddInfoRequest(Resource):
-
-    def post(self):
-        request_payload = request.get_json()
-        log(f"Got the info request payload {request_payload}!")
-        resp = validate_payload_schema_based_on_version(request_payload, 'info')
-        if resp is None:
-            entry_object_id = dump_request_payload("info", request_payload)
-            resp = bpp_post_call('info', request_payload)
-            log(f"Got the info response {resp}!")
-            update_dumped_request_with_response(entry_object_id, resp)
-            return resp
-        else:
-            return resp

@@ -12,7 +12,7 @@ from main.models.error import BaseError
 from main.repository.ack_response import get_ack_response
 from main.service import send_message_to_queue_for_given_request
 from main.service.common import add_bpp_response, dump_request_payload, update_dumped_request_with_response, \
-    validate_fulfillment_ids_for_on_init, bap_post_call
+    validate_fulfillment_ids_for_on_init
 from main.service.search import add_search_catalogues, dump_on_search_payload, add_incremental_search_catalogues, \
     check_if_search_request_present_and_valid
 from main.service.utils import validate_auth_header
@@ -289,91 +289,4 @@ class AddUpdateResponse(Resource):
             return resp
         else:
             log(f"Got the on_update response {resp}!")
-            return resp
-
-
-# FOR PROVIDING OUR'S INFO
-@ondc_network_namespace.route("/v1/info")
-class AddInfoResponse(Resource):
-
-    # will receive the call
-    # request on_info api on their server with actual information
-    # send our response of ACK
-
-    @validate_auth_header
-    def post(self):
-        request_payload = request.get_json()
-        log(f"Got the info request payload {request_payload} \n headers: {dict(request.headers)}!")
-        resp = validate_payload_schema_based_on_version(request_payload, 'info')
-
-        if resp is None:
-
-            context  = request_payload[constant.CONTEXT]
-            context['key'] = get_config_by_name('BAP_PUBLIC_KEY')
-            context['action'] = 'on_info'
-
-            log(f"updated context: {context}")
-
-            payload = {
-                "context": context,
-                "message": {
-                    "info": {
-                        "type": "BAP",
-                        "entity": {
-                            "gst": {
-                            "legal_entity_name": "Live box Technologies private limited",
-                            "business_address": "7F Ramaniyam gallery, 63 East Coast Road, Thiruvanmiyur, Chennai - 600041",
-                            "city_code": [
-                                "std:044"
-                            ],
-                            "gst_no": "33AAECL5102D1Z7"
-                            },
-                            "pan": {
-                                "name_as_per_pan": "Live box Technologies private limited",
-                                "pan_no": "AAECL5102D",
-                                "date_of_incorporation": "08/02/2021"
-                            },
-                            "name_of_authorised_signatory": "Raajamurugan R B",
-                            "address_of_authorised_signatory": "7F Ramaniyam gallery, 63 East Coast Road, Thiruvanmiyur, Chennai - 600041",
-                            "email_id": "raaja@liveboxapp.com",
-                            "mobile_no": 9894838703,
-                            "country": "IND",
-                            "bank_details": {
-                                "account_no": "392387650088712",
-                                "ifsc_code": "SBIN0000691",
-                                "beneficiary_name": "Mayur Popli",
-                                "bank_name": "SBI",
-                                "branch_name": "New Delhi Main"
-                            }
-                        }
-                    }
-                }
-            }
-
-            response = bap_post_call('on_info', payload)
-            log(f"response from on_info {response}")
-
-            return get_ack_response(request_payload[constant.CONTEXT], ack=True)
-        else:
-            return resp
-    
-
-
-# FOR RECEIVING OTHER'S INFO
-@ondc_network_namespace.route("/v1/on_info")
-class AddInfoResponse(Resource):
-
-    @validate_auth_header #TODO: enable headers
-    def post(self):
-        request_payload = request.get_json()
-        log(f"Got the on_info request payload {request_payload} \n headers: {dict(request.headers)}!")
-        resp = validate_payload_schema_based_on_version(request_payload, 'on_info')
-        if resp is None:
-            entry_object_id = dump_request_payload("on_info", request_payload)
-            resp = add_bpp_response(request_payload, request_type="on_info")
-            update_dumped_request_with_response(entry_object_id, resp)
-            log(f"Got the on_info response {resp}!")
-            return resp
-        else:
-            log(f"Got the on_info response {resp}!")
             return resp

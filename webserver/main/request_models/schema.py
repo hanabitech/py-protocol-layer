@@ -85,7 +85,6 @@ class Action(Enum):
     support = 'support'
     issue = 'issue'
     issue_status = 'issue_status'
-    info = 'info'
     on_search = 'on_search'
     on_select = 'on_select'
     on_init = 'on_init'
@@ -99,7 +98,6 @@ class Action(Enum):
     on_issue = 'on_issue'
     on_issue_status = 'on_issue_status'
     on_collector_recon = 'on_collector_recon'
-    on_info = 'on_info'
 
 
 class Country(BaseModel):
