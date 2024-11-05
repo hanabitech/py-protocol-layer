@@ -26,14 +26,6 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                 {
                     "code":"static_terms",
                     "value":""
-                },
-                {
-                    "code":"static_terms_new",
-                    "value":"https://github.com/ONDC-Official/NP-Static-Terms/buyerNP_BNP/1.0/tc.pdf"
-                },
-                {
-                    "code":"effective_date",
-                    "value":"2023-10-01T00:00:00.000Z"
                 }
             ]
         }
@@ -73,6 +65,10 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                     }
             }
         }
+
+        # add static terms tag
+        message['intent']['tags'] = tags
+
     else:
         city_list = ["*"] if cities is None else cities
         if mode == "start_and_stop":
@@ -103,6 +99,9 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                             ]
                     }
             }
+
+            message['intent']['tags'] = message['intent']['tags'] + tags
+
         else:
             message = {
                 "intent": {
@@ -126,9 +125,10 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                         ]
                 }
             }
-    
-    # add static terms tag
-    message['intent']['tags'] = message['intent']['tags'] + tags
+
+            if mode == "start":
+                message['intent']['tags'] = message['intent']['tags'] + tags
+            # skip adding any tags in stop call 
 
     for d in domain_list:
         for c in city_list:
