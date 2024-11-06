@@ -197,6 +197,7 @@ class Type2(Enum):
     Cancel = 'Cancel'
     Return = 'Return'
     RTO = 'RTO'
+    Buyer_Delivery = "Buyer-Delivery"
 
 
 class Gps(BaseModel):

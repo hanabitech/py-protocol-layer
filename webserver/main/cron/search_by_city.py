@@ -18,6 +18,21 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
     domain_list = [e.value for e in Domain] if domains is None else domains
     end_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
     start_time = (datetime.utcnow() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
+    tags = [
+        {
+            "code":"bap_terms",
+            "list": [
+                {
+                    "code":"static_terms",
+                    "value":""
+                }
+            ]
+        }
+    ]
+
+
+
     if search_type == SearchType.FULL:
         city_list = ['std:06274', 'std:0451', 'std:0120', 'std:0512', 'std:05842', 'std:0522', 'std:06243', 'std:04286',
                      'std:05547', 'std:0474', 'std:0121', 'std:04266', 'std:04142', 'std:0551', 'std:0124', 'std:0591',
@@ -50,6 +65,10 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                     }
             }
         }
+
+        # add static terms tag
+        message['intent']['tags'] = tags
+
     else:
         city_list = ["*"] if cities is None else cities
         if mode == "start_and_stop":
@@ -80,6 +99,9 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                             ]
                     }
             }
+
+            message['intent']['tags'] = message['intent']['tags'] + tags
+
         else:
             message = {
                 "intent": {
@@ -103,6 +125,10 @@ def make_http_requests_for_search_by_city(search_type: SearchType, domains=None,
                         ]
                 }
             }
+
+            if mode == "start":
+                message['intent']['tags'] = message['intent']['tags'] + tags
+            # skip adding any tags in stop call 
 
     for d in domain_list:
         for c in city_list:
